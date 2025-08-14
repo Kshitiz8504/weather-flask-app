@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather App</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container fade-in">
+      <h1 class="title">Weather App</h1>
+
+      <form method="POST" class="search">
+        <input type="text" name="city" placeholder="Enter city" value="" />
+        <button type="submit">Search</button>
+      </form>
+
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %} {% if locations %}
+      <div class="location-list">
+        <p>Select a location:</p>
+        <ul>
+          {% for loc in locations %}
+          <li>
+            <form method="POST" class="location-form">
+              <input type="hidden" name="lat" value="{{ loc.lat }}" />
+              <input type="hidden" name="lon" value="{{ loc.lon }}" />
+              <button type="submit" class="location-btn">
+                {{ loc.name }}, {{ loc.country }}
+              </button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %} {% if current %}
+      <div class="current">
+        <h2>{{ current.name }}, {{ current.country }}</h2>
+        <div class="big-temp">{{ current.temp }}°C</div>
+        <p>{{ current.description }}</p>
+        <p>
+          Feels like {{ current.feels_like }}°C · Humidity {{ current.humidity
+          }}% · Wind {{ current.wind }} m/s
+        </p>
+      </div>
+
+      {% if forecast %}
+      <h3 style="text-align: center">5-day Forecast</h3>
+      <div class="forecast-grid">
+        {% for day in forecast %}
+        <div class="day" onclick="toggleDetails(this)">
+          <h4>{{ day.date }}</h4>
+          {% if day.icon %}
+          <img
+            src="https://openweathermap.org/img/wn/{{ day.icon }}@2x.png"
+            alt="{{ day.description }}"
+          />
+          {% endif %}
+          <div class="temp">{{ day.temp }}°C</div>
+          <small>{{ day.description }}</small>
+
+          <div class="details">
+            <p>Feels like: {{ day.feels_like }}°C</p>
+            <p>Min: {{ day.min }}°C / Max: {{ day.max }}°C</p>
+            <p>Humidity: {{ day.humidity }}%</p>
+            <p>Wind: {{ day.wind }} m/s</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endif %}
+    </div>
+  </body>
+</html>
+
+<script>
+  function toggleDetails(el) {
+    el.classList.toggle("expanded");
+  }
+</script>
